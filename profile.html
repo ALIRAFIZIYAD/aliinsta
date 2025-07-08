@@ -1,0 +1,3002 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InstaModern - A Modern Instagram Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #405DE6;
+            --secondary-color: #5851DB;
+            --accent-color: #833AB4;
+            --danger-color: #E1306C;
+            --light-color: #F5F5F5;
+            --dark-color: #262626;
+            --text-dark: #1E1E1E;
+            --text-light: #8E8E8E;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--text-dark);
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left Sidebar - Navigation */
+        .left-sidebar {
+            width: 250px;
+            border-right: 1px solid #dbdbdb;
+            padding: 20px;
+            background: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--danger-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 10px;
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--text-dark);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item.active {
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item.active i {
+            font-weight: 600;
+        }
+
+        .nav-item-text {
+            font-size: 16px;
+        }
+
+        .more-menu {
+            position: absolute;
+            bottom: 30px;
+            width: calc(100% - 40px);
+        }
+
+        /* Main Content - Feed */
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            max-width: 700px;
+            transition: var(--transition);
+        }
+
+        .stories-bar {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 20px 0;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            box-shadow: var(--shadow);
+        }
+
+        .stories-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .story-circle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .story-circle-pic {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--danger-color)) border-box;
+            padding: 2px;
+            transition: var(--transition);
+        }
+
+        .story-circle:hover .story-circle-pic {
+            transform: scale(1.05);
+        }
+
+        .story-circle-username {
+            font-size: 12px;
+            margin-top: 5px;
+            max-width: 70px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .story-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 2px solid white;
+        }
+
+        .post {
+            background: white;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .post:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+        }
+
+        .post-user {
+            display: flex;
+            align-items: center;
+        }
+
+        .post-user-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            transition: var(--transition);
+        }
+
+        .post-user:hover .post-user-pic {
+            transform: scale(1.1);
+        }
+
+        .post-username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .post-more {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .post-more:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .post-image {
+            width: 100%;
+            max-height: 800px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .post-image-container {
+            position: relative;
+        }
+
+        .post-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .post-image-container:hover .post-image-overlay {
+            opacity: 1;
+        }
+
+        .overlay-icon {
+            color: white;
+            font-size: 24px;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 16px;
+        }
+
+        .post-actions-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-action {
+            font-size: 24px;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 4px;
+        }
+
+        .post-action:hover {
+            transform: scale(1.1);
+        }
+
+        .post-likes {
+            padding: 0 16px;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .post-likes:hover {
+            text-decoration: underline;
+        }
+
+        .post-caption {
+            padding: 0 16px;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .caption-username {
+            font-weight: 600;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        .caption-username:hover {
+            text-decoration: underline;
+        }
+
+        .post-comments {
+            padding: 0 16px;
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .post-comments:hover {
+            text-decoration: underline;
+        }
+
+        .post-time {
+            padding: 0 16px;
+            color: var(--text-light);
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .post-add-comment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid #efefef;
+        }
+
+        .comment-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 14px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        .comment-input:focus {
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+        .post-button {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: var(--transition);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .post-button:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .post-button.active {
+            opacity: 1;
+        }
+
+        .post-button.active:hover {
+            opacity: 0.8;
+        }
+
+        /* Right Sidebar - Suggestions */
+        .suggestions-sidebar {
+            width: 350px;
+            padding: 20px;
+            position: fixed;
+            right: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .suggestions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .suggestions-title {
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .see-all {
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .see-all:hover {
+            color: var(--primary-color);
+        }
+
+        .suggestion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .suggestion:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .suggestion-user {
+            display: flex;
+            align-items: center;
+        }
+
+        .suggestion-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            transition: var(--transition);
+        }
+
+        .suggestion:hover .suggestion-pic {
+            transform: scale(1.1);
+        }
+
+        .suggestion-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .suggestion-username {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .suggestion-status {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        .follow-button {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .follow-button:hover {
+            color: var(--accent-color);
+        }
+
+        .footer-links {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            font-size: 11px;
+            margin-right: 8px;
+            margin-bottom: 5px;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 11px;
+            margin-top: 15px;
+        }
+
+        /* Bottom Navigation (Mobile) */
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #dbdbdb;
+            padding: 12px 0;
+            justify-content: space-around;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            color: var(--dark-color);
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-icon.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        /* Create Post Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #dbdbdb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-weight: 600;
+        }
+
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            padding: 8px;
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .create-post-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .create-post-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .create-post-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .create-post-button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Story View Modal */
+        .story-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: black;
+            z-index: 1000;
+        }
+
+        .story-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .story-progress {
+            display: flex;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .progress-bar {
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.4);
+            flex: 1;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: white;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .story-user {
+            display: flex;
+            align-items: center;
+            color: white;
+            margin-left: 15px;
+        }
+
+        .story-user-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .story-close {
+            color: white;
+            font-size: 24px;
+            margin-left: auto;
+            cursor: pointer;
+        }
+
+        .story-content {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .story-image {
+            max-height: 90vh;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .story-nav {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            cursor: pointer;
+        }
+
+        .story-prev {
+            left: 0;
+        }
+
+        .story-next {
+            right: 0;
+        }
+
+        /* Comments Modal */
+        .comments-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 1000;
+        }
+
+        .comments-header {
+            padding: 16px;
+            border-bottom: 1px solid #dbdbdb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+
+        .comments-close {
+            cursor: pointer;
+            font-size: 20px;
+            padding: 8px;
+        }
+
+        .comments-body {
+            padding: 16px;
+            height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+
+        .comment {
+            display: flex;
+            margin-bottom: 16px;
+        }
+
+        .comment-user-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-username {
+            font-weight: 600;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .comment-actions {
+            display: flex;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .comment-action {
+            margin-right: 16px;
+            cursor: pointer;
+        }
+
+        .comment-time {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .comments-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            border-top: 1px solid #dbdbdb;
+            background: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .comment-like {
+            margin-right: 16px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .suggestions-sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 935px) {
+            .left-sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 735px) {
+            .bottom-nav {
+                display: flex;
+            }
+
+            .post {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .stories-bar {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .left-sidebar,
+        body.dark-mode .suggestions-sidebar,
+        body.dark-mode .post,
+        body.dark-mode .stories-bar,
+        body.dark-mode .modal-content,
+        body.dark-mode .comments-modal {
+            background-color: #1e1e1e;
+            border-color: #333;
+        }
+
+        body.dark-mode .logo,
+        body.dark-mode .username,
+        body.dark-mode .post-username,
+        body.dark-mode .caption-username,
+        body.dark-mode .suggestion-username,
+        body.dark-mode .story-username,
+        body.dark-mode .see-all,
+        body.dark-mode .post-likes,
+        body.dark-mode .post-caption,
+        body.dark-mode .comment-username,
+        body.dark-mode .comment-text,
+        body.dark-mode .modal-title,
+        body.dark-mode .nav-item {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .name,
+        body.dark-mode .story-time,
+        body.dark-mode .suggestion-status,
+        body.dark-mode .post-time,
+        body.dark-mode .post-comments,
+        body.dark-mode .suggestions-title,
+        body.dark-mode .copyright,
+        body.dark-mode .footer-links a,
+        body.dark-mode .comment-time,
+        body.dark-mode .comment-actions {
+            color: #a0a0a0;
+        }
+
+        body.dark-mode .comment-input {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .bottom-nav,
+        body.dark-mode .comments-header,
+        body.dark-mode .comments-footer {
+            background-color: #1e1e1e;
+            border-color: #333;
+        }
+
+        body.dark-mode .nav-icon {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .user-profile:hover,
+        body.dark-mode .story:hover,
+        body.dark-mode .suggestion:hover,
+        body.dark-mode .post-more:hover,
+        body.dark-mode .comment:hover,
+        body.dark-mode .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .comment-input:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body.dark-mode .post-button:hover,
+        body.dark-mode .comment-action:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: none;
+            width: 40px;
+            height: 40px;
+            margin: 20px auto;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Reels Section */
+        .reels-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .reel {
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .reel-video {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+        }
+
+        .reel-actions {
+            position: absolute;
+            right: 10px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .reel-action {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .reel-action i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .reel-action-count {
+            font-size: 12px;
+        }
+
+        /* Explore Grid */
+        .explore-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .explore-item {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .explore-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .explore-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .explore-item:hover .explore-overlay {
+            opacity: 1;
+        }
+
+        .explore-stats {
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .explore-stats span {
+            margin: 0 5px;
+        }
+
+        /* Profile Section */
+        .profile-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-pic-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 30px;
+            border: 2px solid transparent;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color), var(--danger-color)) border-box;
+        }
+
+        .profile-stats {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .profile-stat {
+            margin-right: 30px;
+            text-align: center;
+        }
+
+        .profile-stat-count {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .profile-stat-label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .profile-bio {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .profile-tabs {
+            display: flex;
+            border-top: 1px solid #dbdbdb;
+            margin-bottom: 20px;
+        }
+
+        .profile-tab-button {
+            flex: 1;
+            text-align: center;
+            padding: 15px 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .profile-tab-button.active {
+            border-top: 2px solid var(--dark-color);
+        }
+
+        .profile-posts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .profile-post {
+            aspect-ratio: 1;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .profile-post:hover .profile-post-overlay {
+            opacity: 1;
+        }
+
+        .profile-post-stats {
+            color: white;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-post-stats span {
+            margin: 0 5px;
+        }
+
+        /* Message Section */
+        .messages-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .message-search {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #dbdbdb;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .message-thread {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .message-thread:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .message-user-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-username {
+            font-weight: 600;
+        }
+
+        .message-preview {
+            color: var(--text-light);
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-time {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        /* Notification Section */
+        .notifications-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .notification {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .notification-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-text {
+            font-size: 14px;
+        }
+
+        .notification-text strong {
+            font-weight: 600;
+        }
+
+        .notification-time {
+            color: var(--text-light);
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .notification-action {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Search Section */
+        .search-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border-radius: 8px;
+            border: 1px solid #dbdbdb;
+            font-size: 14px;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: var(--text-light);
+        }
+
+        .search-categories {
+            margin-bottom: 20px;
+        }
+
+        .search-category {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-category:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .search-results {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .search-result {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-result:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .search-result-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .search-result-info {
+            flex: 1;
+        }
+
+        .search-result-username {
+            font-weight: 600;
+        }
+
+        .search-result-name {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .search-result-follow {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        /* Settings Modal */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .settings-header {
+            padding: 16px;
+            border-bottom: 1px solid #dbdbdb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .settings-close {
+            cursor: pointer;
+            font-size: 20px;
+            padding: 8px;
+        }
+
+        .settings-body {
+            padding: 20px;
+        }
+
+        .settings-option {
+            padding: 15px 0;
+            border-bottom: 1px solid #dbdbdb;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+
+        .settings-option:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .settings-option i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Saved Posts Section */
+        .saved-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .saved-collections {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .saved-collection {
+            aspect-ratio: 1;
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .saved-collection-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .saved-collection-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .saved-collection-count {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .saved-collection-name {
+            font-size: 14px;
+        }
+
+        .saved-posts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        /* IGTV Section */
+        .igtv-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .igtv-videos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .igtv-video {
+            cursor: pointer;
+        }
+
+        .igtv-thumbnail {
+            width: 100%;
+            aspect-ratio: 9/16;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .igtv-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .igtv-user {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .igtv-user-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .igtv-views {
+            color: var(--text-light);
+            font-size: 12px;
+        }
+
+        /* Tagged Posts Section */
+        .tagged-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        /* Live Section */
+        .live-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .live-stream {
+            position: relative;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .live-thumbnail {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        .live-info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .live-username {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .live-title {
+            margin-bottom: 10px;
+        }
+
+        .live-viewers {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .live-viewers i {
+            margin-right: 5px;
+        }
+
+        .live-actions {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .live-action {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .live-action i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .live-action-count {
+            font-size: 12px;
+        }
+
+        /* Shopping Section */
+        .shopping-tab {
+            display: none;
+            padding: 20px;
+        }
+
+        .shopping-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .shopping-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .shopping-options {
+            margin-left: auto;
+            display: flex;
+        }
+
+        .shopping-option {
+            margin-left: 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .shopping-option.active {
+            font-weight: 600;
+            border-bottom: 2px solid var(--dark-color);
+        }
+
+        .shopping-products {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .shopping-product {
+            cursor: pointer;
+        }
+
+        .product-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-name {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar - Navigation -->
+        <div class="left-sidebar">
+            <div class="logo"><i class="fas fa-camera-retro"></i> InstaModern</div>
+
+            <div class="nav-menu">
+                <a href="#" class="nav-item active" onclick="showTab('feed')">
+                    <i class="fas fa-home"></i>
+                    <span class="nav-item-text">Home</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('search')">
+                    <i class="fas fa-search"></i>
+                    <span class="nav-item-text">Search</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('explore')">
+                    <i class="fas fa-compass"></i>
+                    <span class="nav-item-text">Explore</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('reels')">
+                    <i class="fas fa-film"></i>
+                    <span class="nav-item-text">Reels</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('messages')">
+                    <i class="fas fa-paper-plane"></i>
+                    <span class="nav-item-text">Messages</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('notifications')">
+                    <i class="fas fa-heart"></i>
+                    <span class="nav-item-text">Notifications</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('create')" id="create-post-btn">
+                    <i class="fas fa-plus-square"></i>
+                    <span class="nav-item-text">Create</span>
+                </a>
+                <a href="#" class="nav-item" onclick="showTab('profile')">
+                    <i class="fas fa-user"></i>
+                    <span class="nav-item-text">Profile</span>
+                </a>
+            </div>
+
+            <div class="more-menu">
+                <a href="#" class="nav-item" id="settings-btn">
+                    <i class="fas fa-bars"></i>
+                    <span class="nav-item-text">More</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content - Feed -->
+        <div class="main-content" id="main-content">
+            <!-- Home Feed (Default) -->
+            <div class="feed-tab" id="feed-tab">
+                <div class="stories-bar">
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/9b/c8/a6/9bc8a66cc4ecd5901674bf43e5fff8de.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">Your Story</div>
+                        <div class="story-badge">+</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_ziyaneeey_</div>
+                        <div class="story-badge">3</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">rabiyeee</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_mr_hashim_v_</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/cf/8d/ab/cf8dabb4f216c67e1b8c9f840d3d327a.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_jalal___</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/4e/47/2c/4e472c1a7ad9d54d7326649c7ab9bc56.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_hayyaaann___</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/3a/14/e1/3a14e1d62e19eb05b34614a2539622d9.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_sadaqeeeye__</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/20/71/36/207136a883b3094c53a79b5f4ad5de96.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_l4sin__</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/e6/41/05/e641057203441d1ae6c995273933e71f.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_ham__daaan__</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/b3/81/ce/b381ce751147b73c4fae2ea10fe9bda3.jpg"
+                            class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">_Mhd__ali__</div>
+                    </div>
+
+                    <div class="story-circle">
+                        <img src="https://i.pinimg.com/736x/0b/94/1f/0b941f276c1cffd70868fc93f7d0f3ad.jpg" class="story-circle-pic" alt="Story">
+                        <div class="story-circle-username">SHA__faaann__</div>
+                    </div>
+                </div>
+
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-user">
+                            <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg"
+                                class="post-user-pic" alt="User">
+                            <div class="post-username">rabiyeee</div>
+                        </div>
+                        <div class="post-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-image-container">
+                        <img src="https://dqdhdc.netlify.app/pic/995.jpg" class="post-image" alt="Post">
+                        <div class="post-image-overlay">
+                            <i class="far fa-heart overlay-icon"></i>
+                            <i class="far fa-comment overlay-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <i class="far fa-heart post-action"></i>
+                            <i class="far fa-comment post-action"></i>
+                            <i class="far fa-paper-plane post-action"></i>
+                        </div>
+                        <div class="post-actions-right">
+                            <i class="far fa-bookmark post-action"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-likes">1,234 likes</div>
+
+                    <div class="post-caption">
+                        <span class="caption-username">rabiyeee</span>
+                        Beautiful day in the mountains! #nature #adventure #photography #landscape
+                    </div>
+
+                    <div class="post-comments" onclick="showComments()">View all 87 comments</div>
+
+                    <div class="post-time">2 hours ago</div>
+
+                    <div class="post-add-comment">
+                        <input type="text" class="comment-input" placeholder="Add a comment...">
+                        <div class="post-button">Post</div>
+                    </div>
+                </div>
+                
+
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-user">
+                            <img src="https://i.pinimg.com/736x/b6/1f/0f/b61f0f92d794290b7e80131c5f1048d0.jpg"
+                            " class="post-user-pic" alt="User">
+                            <div class="post-username">quaf__dhdc__</div>
+                        </div>
+                        <div class="post-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-image-container">
+                        <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="post-image"
+                            alt="Post">
+                        <div class="post-image-overlay">
+                            <i class="far fa-heart overlay-icon"></i>
+                            <i class="far fa-comment overlay-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <i class="fas fa-heart post-action" style="color: var(--danger-color);"></i>
+                            <i class="far fa-comment post-action"></i>
+                            <i class="far fa-paper-plane post-action"></i>
+                        </div>
+                        <div class="post-actions-right">
+                            <i class="fas fa-bookmark post-action"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-likes">2,567 likes</div>
+
+                    <div class="post-caption">
+                        <span class="caption-username">quaf__dhdc__</span>
+                        City lights never looked better! #urban #nightphotography #cityscape #architecture
+                    </div>
+
+                    <div class="post-comments" onclick="showComments()">View all 124 comments</div>
+
+                    <div class="post-time">5 hours ago</div>
+
+                    <div class="post-add-comment">
+                        <input type="text" class="comment-input" placeholder="Add a comment...">
+                        <div class="post-button">Post</div>
+                    </div>
+                </div>
+
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-user">
+                            <img src="https://i.pinimg.com/736x/e6/41/05/e641057203441d1ae6c995273933e71f.jpg"
+                                class="post-user-pic" alt="User">
+                            <div class="post-username">_ham__daaan__</div>
+                        </div>
+                        <div class="post-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-image-container">
+                        <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="post-image"
+                            alt="Post">
+                        <div class="post-image-overlay">
+                            <i class="far fa-heart overlay-icon"></i>
+                            <i class="far fa-comment overlay-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <i class="far fa-heart post-action"></i>
+                            <i class="far fa-comment post-action"></i>
+                            <i class="far fa-paper-plane post-action"></i>
+                        </div>
+                        <div class="post-actions-right">
+                            <i class="far fa-bookmark post-action"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-likes">3,421 likes</div>
+
+                    <div class="post-caption">
+                        <span class="caption-username">_ham__daaan__</span>
+                        Sunset vibes 🌅 #sunset #beach #vacation #travel
+                    </div>
+
+                    <div class="post-comments" onclick="showComments()">View all 156 comments</div>
+
+                    <div class="post-time">8 hours ago</div>
+
+                    <div class="post-add-comment">
+                        <input type="text" class="comment-input" placeholder="Add a comment...">
+                        <div class="post-button">Post</div>
+                    </div>
+                </div>
+                
+                <div class="spinner" id="feed-spinner"></div>
+            </div>
+            
+            <!-- Reels Tab -->
+            <div class="reels-tab" id="reels-tab">
+                <div class="reel">
+                    <video class="reel-video" loop>
+                        <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+                    </video>
+                    <div class="reel-actions">
+                        <div class="reel-action">
+                            <i class="far fa-heart"></i>
+                            <div class="reel-action-count">12.4K</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="far fa-comment"></i>
+                            <div class="reel-action-count">1.2K</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="far fa-paper-plane"></i>
+                            <div class="reel-action-count">Share</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="reel">
+                    <video class="reel-video" loop>
+                        <source src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4" type="video/mp4">
+                    </video>
+                    <div class="reel-actions">
+                        <div class="reel-action">
+                            <i class="far fa-heart"></i>
+                            <div class="reel-action-count">8.7K</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="far fa-comment"></i>
+                            <div class="reel-action-count">856</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="far fa-paper-plane"></i>
+                            <div class="reel-action-count">Share</div>
+                        </div>
+                        <div class="reel-action">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Explore Tab -->
+            <div class="explore-tab" id="explore-tab">
+                <div class="explore-grid">
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>1.2K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>245</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>2.4K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>512</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>3.1K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>689</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>876</span>
+                                <i class="fas fa-comment"></i>
+                                <span>132</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>1.8K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>421</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="explore-item">
+                        <img src="https://i.pinimg.com/736x/cf/8d/ab/cf8dabb4f216c67e1b8c9f840d3d327a.jpg" class="explore-image" alt="Explore">
+                        <div class="explore-overlay">
+                            <div class="explore-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>2.3K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>567</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Notifications Tab -->
+            <div class="notifications-tab" id="notifications-tab">
+                <div class="notification">
+                    <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="notification-pic" alt="User">
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>_ziyaneeey_</strong> and <strong>12 others</strong> liked your photo.
+                        </div>
+                        <div class="notification-time">2 hours ago</div>
+                    </div>
+                    <div class="notification-action">Follow</div>
+                </div>
+                
+                <div class="notification">
+                    <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="notification-pic" alt="User">
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>rabiyeee</strong> started following you.
+                        </div>
+                        <div class="notification-time">5 hours ago</div>
+                    </div>
+                    <div class="notification-action">Message</div>
+                </div>
+                
+                <div class="notification">
+                    <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg" class="notification-pic" alt="User">
+                    <div class="notification-content">
+                        <div class="notification-text">
+                            <strong>_mr_hashim_v_</strong> mentioned you in a comment: "@ali__rafi.__ check this out!"
+                        </div>
+                        <div class="notification-time">1 day ago</div>
+                    </div>
+                    <div class="notification-action">View</div>
+                </div>
+            </div>
+            
+            <!-- Profile Tab -->
+            <div class="profile-tab" id="profile-tab">
+                <div class="profile-header">
+                    <img src="https://i.pinimg.com/736x/9b/c8/a6/9bc8a66cc4ecd5901674bf43e5fff8de.jpg" class="profile-pic-large" alt="Profile">
+                    <div>
+                        <div class="profile-stats">
+                            <div class="profile-stat">
+                                <div class="profile-stat-count">3</div>
+                                <div class="profile-stat-label">Posts</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-count">1.M</div>
+                                <div class="profile-stat-label">Followers</div>
+                            </div>
+                            <div class="profile-stat">
+                                <div class="profile-stat-count">456</div>
+                                <div class="profile-stat-label">Following</div>
+                            </div>
+                        </div>
+                        <div class="profile-bio">
+                            <strong>علي رافع</strong><br>
+                            Photographer & Travel Enthusiast<br>
+                            Capturing moments around the world<br>
+                            📍 Dubai, UAE
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-tabs">
+                    <div class="profile-tab-button active" onclick="showProfilePosts()">
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <div class="profile-tab-button" onclick="showProfileTagged()">
+                        <i class="fas fa-user-tag"></i>
+                    </div>
+                    <div class="profile-tab-button" onclick="showProfileSaved()">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                </div>
+                
+                <div class="profile-posts" id="profile-posts">
+                    <div class="profile-post">
+                        <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="profile-post-image" alt="Post">
+                        <div class="profile-post-overlay">
+                            <div class="profile-post-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>1.2K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>245</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-post">
+                        <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="profile-post-image" alt="Post">
+                        <div class="profile-post-overlay">
+                            <div class="profile-post-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>2.4K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>512</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-post">
+                        <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="profile-post-image" alt="Post">
+                        <div class="profile-post-overlay">
+                            <div class="profile-post-stats">
+                                <i class="fas fa-heart"></i>
+                                <span>3.1K</span>
+                                <i class="fas fa-comment"></i>
+                                <span>689</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tagged-tab" id="profile-tagged" style="display: none;">
+                    <p>No tagged photos</p>
+                </div>
+                
+                <div class="saved-tab" id="profile-saved" style="display: none;">
+                    <div class="saved-collections">
+                        <div class="saved-collection">
+                            <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="saved-collection-image" alt="Collection">
+                            <div class="saved-collection-overlay">
+                                <div class="saved-collection-count">24</div>
+                                <div class="saved-collection-name">Travel</div>
+                            </div>
+                        </div>
+                        <div class="saved-collection">
+                            <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="saved-collection-image" alt="Collection">
+                            <div class="saved-collection-overlay">
+                                <div class="saved-collection-count">12</div>
+                                <div class="saved-collection-name">Inspiration</div>
+                            </div>
+                        </div>
+                        <div class="saved-collection">
+                            <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="saved-collection-image" alt="Collection">
+                            <div class="saved-collection-overlay">
+                                <div class="saved-collection-count">8</div>
+                                <div class="saved-collection-name">Photography</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Messages Tab -->
+            <div class="messages-tab" id="messages-tab">
+                <input type="text" class="message-search" placeholder="Search messages">
+                
+                <div class="message-thread">
+                    <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="message-user-pic" alt="User">
+                    <div class="message-content">
+                        <div class="message-username">_ziyaneeey_</div>
+                        <div class="message-preview">Hey, how are you doing?</div>
+                    </div>
+                    <div class="message-time">2h</div>
+                </div>
+                
+                <div class="message-thread">
+                    <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="message-user-pic" alt="User">
+                    <div class="message-content">
+                        <div class="message-username">rabiyeee</div>
+                        <div class="message-preview">Check out this new place I found!</div>
+                    </div>
+                    <div class="message-time">5h</div>
+                </div>
+                
+                <div class="message-thread">
+                    <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg" class="message-user-pic" alt="User">
+                    <div class="message-content">
+                        <div class="message-username">_mr_hashim_v_</div>
+                        <div class="message-preview">Are you coming to the event tomorrow?</div>
+                    </div>
+                    <div class="message-time">1d</div>
+                </div>
+            </div>
+            
+            <!-- Search Tab -->
+            <div class="search-tab" id="search-tab">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search">
+                </div>
+                
+                <div class="search-categories">
+                    <div class="search-category">Photography</div>
+                    <div class="search-category">Travel</div>
+                    <div class="search-category">Food</div>
+                    <div class="search-category">Art</div>
+                    <div class="search-category">Fashion</div>
+                    <div class="search-category">Nature</div>
+                </div>
+                
+                <div class="search-results">
+                    <div class="search-result">
+                        <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="search-result-pic" alt="User">
+                        <div class="search-result-info">
+                            <div class="search-result-username">_ziyaneeey_</div>
+                            <div class="search-result-name">Ziyan Ahmed</div>
+                        </div>
+                        <div class="search-result-follow">Follow</div>
+                    </div>
+                    
+                    <div class="search-result">
+                        <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="search-result-pic" alt="User">
+                        <div class="search-result-info">
+                            <div class="search-result-username">rabiyeee</div>
+                            <div class="search-result-name">Rabiya Khan</div>
+                        </div>
+                        <div class="search-result-follow">Follow</div>
+                    </div>
+                    
+                    <div class="search-result">
+                        <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg" class="search-result-pic" alt="User">
+                        <div class="search-result-info">
+                            <div class="search-result-username">_mr_hashim_v_</div>
+                            <div class="search-result-name">Hashim Vlogs</div>
+                        </div>
+                        <div class="search-result-follow">Follow</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- IGTV Tab -->
+            <div class="igtv-tab" id="igtv-tab">
+                <div class="igtv-videos">
+                    <div class="igtv-video">
+                        <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="igtv-thumbnail" alt="IGTV">
+                        <div class="igtv-title">My Travel Diary: Dubai</div>
+                        <div class="igtv-user">
+                            <img src="https://i.pinimg.com/736x/9b/c8/a6/9bc8a66cc4ecd5901674bf43e5fff8de.jpg" class="igtv-user-pic" alt="User">
+                            <div>ali__rafi.__</div>
+                        </div>
+                        <div class="igtv-views">12.4K views</div>
+                    </div>
+                    
+                    <div class="igtv-video">
+                        <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="igtv-thumbnail" alt="IGTV">
+                        <div class="igtv-title">Photography Tips for Beginners</div>
+                        <div class="igtv-user">
+                            <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="igtv-user-pic" alt="User">
+                            <div>_ziyaneeey_</div>
+                        </div>
+                        <div class="igtv-views">8.7K views</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Live Tab -->
+            <div class="live-tab" id="live-tab">
+                <div class="live-stream">
+                    <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="live-thumbnail" alt="Live">
+                    <div class="live-info">
+                        <div class="live-username">rabiyeee</div>
+                        <div class="live-title">Cooking show live from my kitchen!</div>
+                        <div class="live-viewers">
+                            <i class="fas fa-eye"></i>
+                            <span>1.2K viewers</span>
+                        </div>
+                    </div>
+                    <div class="live-actions">
+                        <div class="live-action">
+                            <i class="far fa-heart"></i>
+                            <div class="live-action-count">12.4K</div>
+                        </div>
+                        <div class="live-action">
+                            <i class="far fa-comment"></i>
+                            <div class="live-action-count">1.2K</div>
+                        </div>
+                        <div class="live-action">
+                            <i class="far fa-paper-plane"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Shopping Tab -->
+            <div class="shopping-tab" id="shopping-tab">
+                <div class="shopping-header">
+                    <div class="shopping-title">Shop</div>
+                    <div class="shopping-options">
+                        <div class="shopping-option active">For You</div>
+                        <div class="shopping-option">Browse</div>
+                        <div class="shopping-option">Wishlist</div>
+                    </div>
+                </div>
+                
+                <div class="shopping-products">
+                    <div class="shopping-product">
+                        <img src="https://i.pinimg.com/736x/86/70/a9/8670a9c5f7e6dfaef79600d27beaf791.jpg" class="product-image" alt="Product">
+                        <div class="product-price">$49.99</div>
+                        <div class="product-name">Photography Backpack</div>
+                    </div>
+                    
+                    <div class="shopping-product">
+                        <img src="https://i.pinimg.com/736x/74/8a/5c/748a5c83b6dc3e361f67f642c9e911e1.jpg" class="product-image" alt="Product">
+                        <div class="product-price">$29.99</div>
+                        <div class="product-name">Wireless Headphones</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Suggestions -->
+        <div class="suggestions-sidebar">
+            <div class="suggestions-header">
+                <div class="suggestions-title">Suggestions For You</div>
+                <div class="see-all">See All</div>
+            </div>
+
+            <div class="suggestion">
+                <div class="suggestion-user">
+                    <img src="https://i.pinimg.com/736x/42/ee/46/42ee4666b21e3e1204ad55456d5f1dd7.jpg"
+                        class="suggestion-pic" alt="User">
+                    <div class="suggestion-info">
+                        <div class="suggestion-username">_rasal__</div>
+                        <div class="suggestion-status">Followed by emily_wilson + 3 more</div>
+                    </div>
+                </div>
+                <div class="follow-button">Follow</div>
+            </div>
+
+            <div class="suggestion">
+                <div class="suggestion-user">
+                    <img src="https://i.pinimg.com/736x/83/6b/bb/836bbb0c734719b6838fa82d11c23012.jpg"
+                        class="suggestion-pic" alt="User">
+                    <div class="suggestion-info">
+                        <div class="suggestion-username">_sinaaann___</div>
+                        <div class="suggestion-status">New to Instagram</div>
+                    </div>
+                </div>
+                <div class="follow-button">Follow</div>
+            </div>
+
+            <div class="suggestion">
+                <div class="suggestion-user">
+                    <img src="https://i.pinimg.com/736x/16/a9/57/16a9570117787327d84c592bb7dd01c6.jpg"
+                        class="suggestion-pic" alt="User">
+                    <div class="suggestion-info">`
+                        <div class="suggestion-username">_aaqi__bb__</div>
+                        <div class="suggestion-status">Followed by david_brown + 7 more</div>
+                    </div>
+                </div>
+                <div class="follow-button">Follow</div>
+            </div>
+
+            <div class="suggestion">
+                <div class="suggestion-user">
+                    <img src="https://i.pinimg.com/736x/1a/14/8d/1a148d3e75b487f390b6d71d6058b956.jpg"
+                        class="suggestion-pic" alt="User">
+                    <div class="suggestion-info">
+                        <div class="suggestion-username">_as__lam_</div>
+                        <div class="suggestion-status">Followed by lisa_jackson</div>
+                    </div>
+                </div>
+                <div class="follow-button">Follow</div>
+            </div>
+
+            <div class="suggestion">
+                <div class="suggestion-user">
+                    <img src="https://i.pinimg.com/736x/f1/ae/07/f1ae07561ee62a0989370abbb9d0a6d5.jpg"
+                        class="suggestion-pic" alt="User">
+                    <div class="suggestion-info">
+                        <div class="suggestion-username">faheeemm</div>
+                        <div class="suggestion-status">Followed by sarah_smith + 2 more</div>
+                    </div>
+                </div>
+                <div class="follow-button">Follow</div>
+            </div>
+
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">Help</a>
+                <a href="#">Press</a>
+                <a href="#">API</a>
+                <a href="#">Jobs</a>
+                <a href="#">Privacy</a>
+                <a href="#">Terms</a>
+                <a href="#">Locations</a>
+                <a href="#">Top Accounts</a>
+                <a href="#">Hashtags</a>
+                <a href="#">Language</a>
+            </div>
+
+            <div class="copyright">© 2023 INSTAMODERN FROM META</div>
+        </div>
+
+        <!-- Bottom Navigation (Mobile) -->
+        <div class="bottom-nav">
+            <i class="fas fa-home nav-icon active" onclick="showTab('feed')"></i>
+            <i class="far fa-search nav-icon" onclick="showTab('search')"></i>
+            <i class="far fa-plus-square nav-icon" id="create-post-btn"></i>
+            <i class="far fa-heart nav-icon" onclick="showTab('notifications')"><span class="nav-badge">5</span></i>
+            <i class="far fa-user nav-icon" onclick="showTab('profile')"></i>
+        </div>
+
+        <!-- Create Post Modal -->
+        <div class="modal" id="create-post-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title">Create New Post</div>
+                    <div class="modal-close" id="close-modal">&times;</div>
+                </div>
+                <div class="modal-body">
+                    <i class="fas fa-camera create-post-icon"></i>
+                    <div class="create-post-text">Drag photos and videos here</div>
+                    <button class="create-post-button">Select from computer</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Story View Modal -->
+        <div class="story-modal" id="story-modal">
+            <div class="story-header">
+                <div class="story-progress">
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                    <div class="progress-bar"><div class="progress-fill"></div></div>
+                </div>
+                <div class="story-user">
+                    <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="story-user-pic" alt="User">
+                    <div>_ziyaneeey_</div>
+                    <div class="story-close" id="close-story">&times;</div>
+                </div>
+            </div>
+            <div class="story-content">
+                <div class="story-nav story-prev"></div>
+                <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="story-image" alt="Story">
+                <div class="story-nav story-next"></div>
+            </div>
+        </div>
+        
+        <!-- Comments Modal -->
+        <div class="comments-modal" id="comments-modal">
+            <div class="comments-header">
+                <div class="modal-title">Comments</div>
+                <div class="comments-close" id="close-comments">&times;</div>
+            </div>
+            <div class="comments-body">
+                <div class="comment">
+                    <img src="https://i.pinimg.com/736x/57/b0/3a/57b03a898c55970d04cbbe8876629ae7.jpg" class="comment-user-pic" alt="User">
+                    <div class="comment-content">
+                        <div>
+                            <span class="comment-username">_ziyaneeey_</span>
+                            <span class="comment-text">This is amazing! 😍</span>
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-time">2h</span>
+                            <span class="comment-action">Reply</span>
+                            <span class="comment-action">Like</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comment">
+                    <img src="https://i.pinimg.com/736x/16/23/ff/1623ff4b02267f2ba8c9be2ed8f57863.jpg" class="comment-user-pic" alt="User">
+                    <div class="comment-content">
+                        <div>
+                            <span class="comment-username">rabiyeee</span>
+                            <span class="comment-text">Where was this taken? The view is breathtaking!</span>
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-time">5h</span>
+                            <span class="comment-action">Reply</span>
+                            <span class="comment-action">Like</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="comment">
+                    <img src="https://i.pinimg.com/736x/c8/76/7c/c8767cf221587c6a2941daeec424ec3c.jpg" class="comment-user-pic" alt="User">
+                    <div class="comment-content">
+                        <div>
+                            <span class="comment-username">_mr_hashim_v_</span>
+                            <span class="comment-text">@ali__rafi.__ check this out!</span>
+                        </div>
+                        <div class="comment-actions">
+                            <span class="comment-time">1d</span>
+                            <span class="comment-action">Reply</span>
+                            <span class="comment-action">Like</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="comments-footer">
+                <i class="far fa-smile comment-like"></i>
+                <input type="text" class="comment-input" placeholder="Add a comment...">
+                <div class="post-button active">Post</div>
+            </div>
+        </div>
+        
+        <!-- Settings Modal -->
+        <div class="settings-modal" id="settings-modal">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <div class="modal-title">Settings</div>
+                    <div class="settings-close" id="close-settings">&times;</div>
+                </div>
+                <div class="settings-body">
+                    <div class="settings-option">
+                        <i class="fas fa-user"></i> Edit Profile
+                    </div>
+                    <div class="settings-option">
+                        <i class="fas fa-bell"></i> Notifications
+                    </div>
+                    <div class="settings-option">
+                        <i class="fas fa-lock"></i> Privacy
+                    </div>
+                    <div class="settings-option">
+                        <i class="fas fa-moon"></i> Dark Mode
+                    </div>
+                    <div class="settings-option">
+                        <i class="fas fa-sign-out-alt"></i> Log Out
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <div class="dark-mode-toggle" id="dark-mode-toggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Show default tab (feed)
+            showTab('feed');
+            
+            // Like button functionality
+            const likeButtons = document.querySelectorAll('.fa-heart');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (this.classList.contains('far')) {
+                        this.classList.remove('far');
+                        this.classList.add('fas');
+                        this.style.color = 'var(--danger-color)';
+                    } else {
+                        this.classList.remove('fas');
+                        this.classList.add('far');
+                        this.style.color = '';
+                    }
+                });
+            });
+
+            // Bookmark button functionality
+            const bookmarkButtons = document.querySelectorAll('.fa-bookmark');
+            bookmarkButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (this.classList.contains('far')) {
+                        this.classList.remove('far');
+                        this.classList.add('fas');
+                    } else {
+                        this.classList.remove('fas');
+                        this.classList.add('far');
+                    }
+                });
+            });
+
+            // Comment post button activation
+            const commentInputs = document.querySelectorAll('.comment-input');
+            const postButtons = document.querySelectorAll('.post-button');
+
+            commentInputs.forEach((input, index) => {
+                input.addEventListener('input', function () {
+                    if (this.value.trim() !== '') {
+                        postButtons[index].classList.add('active');
+                    } else {
+                        postButtons[index].classList.remove('active');
+                    }
+                });
+            });
+
+            // Mobile navigation
+            const navIcons = document.querySelectorAll('.nav-icon');
+            navIcons.forEach(icon => {
+                icon.addEventListener('click', function () {
+                    navIcons.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // Create post modal
+            const createPostBtn = document.getElementById('create-post-btn');
+            const createPostModal = document.getElementById('create-post-modal');
+            const closeModal = document.getElementById('close-modal');
+
+            createPostBtn.addEventListener('click', function() {
+                createPostModal.style.display = 'flex';
+            });
+
+            closeModal.addEventListener('click', function() {
+                createPostModal.style.display = 'none';
+            });
+
+            // Story functionality
+            const storyCircles = document.querySelectorAll('.story-circle:not(:first-child)');
+            const storyModal = document.getElementById('story-modal');
+            const closeStory = document.getElementById('close-story');
+            const progressBars = document.querySelectorAll('.progress-fill');
+
+            storyCircles.forEach(circle => {
+                circle.addEventListener('click', function() {
+                    storyModal.style.display = 'block';
+                    
+                    // Animate progress bars
+                    progressBars.forEach((bar, index) => {
+                        setTimeout(() => {
+                            bar.style.width = '100%';
+                        }, index * 2000);
+                    });
+
+                    // Reset and close after all animations
+                    setTimeout(() => {
+                        progressBars.forEach(bar => {
+                            bar.style.width = '0%';
+                        });
+                        storyModal.style.display = 'none';
+                    }, progressBars.length * 2000);
+                });
+            });
+
+            closeStory.addEventListener('click', function() {
+                storyModal.style.display = 'none';
+                progressBars.forEach(bar => {
+                    bar.style.width = '0%';
+                });
+            });
+
+            // Dark mode toggle
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            
+            darkModeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    this.innerHTML = '<i class="fas fa-sun"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-moon"></i>';
+                }
+            });
+
+            // Story navigation
+            const storyPrev = document.querySelector('.story-prev');
+            const storyNext = document.querySelector('.story-next');
+            const storyImage = document.querySelector('.story-image');
+
+            storyPrev.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Previous story logic would go here
+                alert('Previous story');
+            });
+
+            storyNext.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Next story logic would go here
+                alert('Next story');
+            });
+            
+            // Comments modal
+            const closeComments = document.getElementById('close-comments');
+            const commentsModal = document.getElementById('comments-modal');
+            
+            closeComments.addEventListener('click', function() {
+                commentsModal.style.display = 'none';
+            });
+            
+            // Settings modal
+            const settingsModal = document.getElementById('settings-modal');
+            const closeSettings = document.getElementById('close-settings');
+            const settingsBtn = document.getElementById('settings-btn');
+            
+            settingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                settingsModal.style.display = 'flex';
+            });
+            
+            closeSettings.addEventListener('click', function() {
+                settingsModal.style.display = 'none';
+            });
+
+            // Close modals when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === createPostModal) {
+                    createPostModal.style.display = 'none';
+                }
+                if (e.target === storyModal) {
+                    storyModal.style.display = 'none';
+                    progressBars.forEach(bar => {
+                        bar.style.width = '0%';
+                    });
+                }
+                if (e.target === commentsModal) {
+                    commentsModal.style.display = 'none';
+                }
+                if (e.target === settingsModal) {
+                    settingsModal.style.display = 'none';
+                }
+            });
+            
+            // Infinite scroll for feed
+            window.addEventListener('scroll', function() {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                    loadMorePosts();
+                }
+            });
+            
+            // Auto-play reels when visible
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.play();
+                    } else {
+                        entry.target.pause();
+                    }
+                });
+            }, {threshold: 0.5});
+            
+            document.querySelectorAll('.reel-video').forEach(video => {
+                observer.observe(video);
+            });
+            
+            // Navigation item active state
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+        
+        // Tab switching function
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.feed-tab, .reels-tab, .explore-tab, .notifications-tab, .profile-tab, .messages-tab, .search-tab, .igtv-tab, .live-tab, .shopping-tab').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Update URL
+            history.pushState(null, null, '#' + tabName);
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        // Profile tab switching
+        function showProfilePosts() {
+            document.getElementById('profile-posts').style.display = 'grid';
+            document.getElementById('profile-tagged').style.display = 'none';
+            document.getElementById('profile-saved').style.display = 'none';
+            document.querySelectorAll('.profile-tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.profile-tab-button')[0].classList.add('active');
+        }
+        
+        function showProfileTagged() {
+            document.getElementById('profile-posts').style.display = 'none';
+            document.getElementById('profile-tagged').style.display = 'block';
+            document.getElementById('profile-saved').style.display = 'none';
+            document.querySelectorAll('.profile-tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.profile-tab-button')[1].classList.add('active');
+        }
+        
+        function showProfileSaved() {
+            document.getElementById('profile-posts').style.display = 'none';
+            document.getElementById('profile-tagged').style.display = 'none';
+            document.getElementById('profile-saved').style.display = 'block';
+            document.querySelectorAll('.profile-tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.profile-tab-button')[2].classList.add('active');
+        }
+        
+        // Show comments modal
+        function showComments() {
+            document.getElementById('comments-modal').style.display = 'block';
+        }
+        
+        // Load more posts for infinite scroll
+        function loadMorePosts() {
+            const spinner = document.getElementById('feed-spinner');
+            spinner.style.display = 'block';
+            
+            // Simulate loading delay
+            setTimeout(() => {
+                // Create a new post element
+                const newPost = document.createElement('div');
+                newPost.className = 'post';
+                newPost.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-user">
+                            <img src="https://i.pinimg.com/736x/cf/8d/ab/cf8dabb4f216c67e1b8c9f840d3d327a.jpg" class="post-user-pic" alt="User">
+                            <div class="post-username">_jalal___</div>
+                        </div>
+                        <div class="post-more">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-image-container">
+                        <img src="https://i.pinimg.com/736x/cf/8d/ab/cf8dabb4f216c67e1b8c9f840d3d327a.jpg" class="post-image" alt="Post">
+                        <div class="post-image-overlay">
+                            <i class="far fa-heart overlay-icon"></i>
+                            <i class="far fa-comment overlay-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="post-actions-left">
+                            <i class="far fa-heart post-action"></i>
+                            <i class="far fa-comment post-action"></i>
+                            <i class="far fa-paper-plane post-action"></i>
+                        </div>
+                        <div class="post-actions-right">
+                            <i class="far fa-bookmark post-action"></i>
+                        </div>
+                    </div>
+
+                    <div class="post-likes">876 likes</div>
+
+                    <div class="post-caption">
+                        <span class="caption-username">_jalal___</span>
+                        Weekend vibes with friends! #weekend #friends #fun
+                    </div>
+
+                    <div class="post-comments" onclick="showComments()">View all 42 comments</div>
+
+                    <div class="post-time">1 day ago</div>
+
+                    <div class="post-add-comment">
+                        <input type="text" class="comment-input" placeholder="Add a comment...">
+                        <div class="post-button">Post</div>
+                    </div>
+                `;
+                
+                // Add the new post to the feed
+                document.getElementById('feed-tab').appendChild(newPost);
+                
+                // Hide spinner
+                spinner.style.display = 'none';
+                
+                // Re-attach event listeners to new elements
+                attachEventListenersToNewPost(newPost);
+            }, 1500);
+        }
+        
+        // Attach event listeners to newly created posts
+        function attachEventListenersToNewPost(postElement) {
+            // Like button
+            const likeButton = postElement.querySelector('.fa-heart');
+            likeButton.addEventListener('click', function() {
+                if (this.classList.contains('far')) {
+                    this.classList.remove('far');
+                    this.classList.add('fas');
+                    this.style.color = 'var(--danger-color)';
+                } else {
+                    this.classList.remove('fas');
+                    this.classList.add('far');
+                    this.style.color = '';
+                }
+            });
+            
+            // Bookmark button
+            const bookmarkButton = postElement.querySelector('.fa-bookmark');
+            bookmarkButton.addEventListener('click', function() {
+                if (this.classList.contains('far')) {
+                    this.classList.remove('far');
+                    this.classList.add('fas');
+                } else {
+                    this.classList.remove('fas');
+                    this.classList.add('far');
+                }
+            });
+            
+            // Comments link
+            const commentsLink = postElement.querySelector('.post-comments');
+            commentsLink.addEventListener('click', showComments);
+            
+            // Comment input
+            const commentInput = postElement.querySelector('.comment-input');
+            const postButton = postElement.querySelector('.post-button');
+            
+            commentInput.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    postButton.classList.add('active');
+                } else {
+                    postButton.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
